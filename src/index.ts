@@ -1,4 +1,16 @@
-export const resizeImage = async (image: File, maxDimension: number, quality: number, format: string) => {
+export const compressImage = async (
+  image: File,
+  maxDimension: number,
+  quality: number = 0.7,
+  format: "webp" | "jpeg" | "png" = "jpeg"
+) => {
+  if (quality < 0 || quality > 1) {
+    console.log(
+      "Invalid quality value of compression. range is 0 to 1. Defaulting value 0.7"
+    );
+    quality = 0.7;
+  }
+
   let img = document.createElement("img");
   img.src = URL.createObjectURL(image);
   await new Promise((resolve: Function, reject) => {
@@ -7,8 +19,6 @@ export const resizeImage = async (image: File, maxDimension: number, quality: nu
     };
   });
 
-  let canvas = document.createElement("canvas");
-  let ctx: any = canvas.getContext("2d");
   let width = img.width;
   let height = img.height;
   let scale = 1;
@@ -20,9 +30,10 @@ export const resizeImage = async (image: File, maxDimension: number, quality: nu
   width *= scale;
   height *= scale;
 
+  let canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-
+  let ctx: any = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0, width, height);
   let dataURI = canvas.toDataURL("image/" + format, quality);
   return await dataURItoBlob(dataURI, image.name);

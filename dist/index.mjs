@@ -1,5 +1,11 @@
 // src/index.ts
-var resizeImage = async (image, maxDimension, quality, format) => {
+var compressImage = async (image, maxDimension, quality = 0.7, format = "jpeg") => {
+  if (quality < 0 || quality > 1) {
+    console.log(
+      "Invalid quality value of compression. range is 0 to 1. Defaulting value 0.7"
+    );
+    quality = 0.7;
+  }
   let img = document.createElement("img");
   img.src = URL.createObjectURL(image);
   await new Promise((resolve, reject) => {
@@ -7,8 +13,6 @@ var resizeImage = async (image, maxDimension, quality, format) => {
       resolve();
     };
   });
-  let canvas = document.createElement("canvas");
-  let ctx = canvas.getContext("2d");
   let width = img.width;
   let height = img.height;
   let scale = 1;
@@ -17,8 +21,10 @@ var resizeImage = async (image, maxDimension, quality, format) => {
   }
   width *= scale;
   height *= scale;
+  let canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
+  let ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0, width, height);
   let dataURI = canvas.toDataURL("image/" + format, quality);
   return await dataURItoBlob(dataURI, image.name);
@@ -35,5 +41,5 @@ var dataURItoBlob = async (dataURI, fileName) => {
   return new File([blob], fileName, { type: mimeString });
 };
 export {
-  resizeImage
+  compressImage
 };
