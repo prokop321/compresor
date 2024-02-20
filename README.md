@@ -1,7 +1,5 @@
 # Image Compression Function
 
-## `compressImage(image: File, maxDimension: number, quality: number = 0.7, format: "webp" | "jpeg" | "png" = "jpeg")`
-
 This function compresses an image to a specified maximum dimension and quality. It also allows you to specify the format of the compressed image.
 
 ### Parameters
